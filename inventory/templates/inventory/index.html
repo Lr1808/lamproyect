@@ -71,6 +71,7 @@
         <button type="submit" class="btn btn-outline-secondary">Search</button>
       </form>
     </div>
+    {% if user.is_superuser %}
     <div class="col-md-4 text-md-end mt-3 mt-md-0">
       <!-- Button trigger modal -->
       <button
@@ -82,6 +83,7 @@
         + Add Product
       </button>
     </div>
+    {% endif %}
   </div>
 
   <!-- Product Table -->
@@ -137,6 +139,7 @@
     </div>
   </div>
 
+  {% if user.is_superuser %}
   <!-- Add Product Modal -->
   <div
     class="modal fade"
@@ -173,6 +176,7 @@
       </div>
     </div>
   </div>
+  {% endif %}
 </div>
 <!-- No custom script needed for Boostrap 5 modal -->
 {% endblock %}

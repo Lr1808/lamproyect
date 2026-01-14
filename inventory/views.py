@@ -22,6 +22,10 @@ def inventory_index(request):
 
     # Add Product Form Handling
     if request.method == 'POST':
+        if not request.user.is_superuser:
+            messages.error(request, 'Solo los administradores pueden agregar productos.')
+            return redirect('inventory_index')
+            
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
