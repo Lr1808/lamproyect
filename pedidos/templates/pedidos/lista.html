@@ -83,8 +83,8 @@
                         style="width: 45px; height: 45px; object-fit: cover"
                       />
                       {% endif %}
-                      <span class="fw-semibold">
-                        {{ pedido.producto.name }}</span
+                      <span class="fw-semibold"
+                        >{{ pedido.producto.name }}</span
                       >
                     </div>
                   </td>
@@ -146,11 +146,7 @@
                 {% for pedido in ventas %}
                 <tr>
                   <td class="fw-bold">#{{ pedido.pk }}</td>
-                  <td class="fw-semibold">
-                    {{
-                    pedido.comprador.get_full_name|default:pedido.comprador.username
-                    }}
-                  </td>
+                  <td class="fw-semibold">{{pedido.comprador.username}}</td>
                   <td>
                     {{ pedido.producto.name|default:"Producto eliminado" }}
                   </td>
