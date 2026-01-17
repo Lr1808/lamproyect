@@ -34,6 +34,7 @@
             <i class="bi bi-bag-check me-2"></i>Mis Compras
           </button>
         </li>
+        {% if user.is_staff or user.is_superuser %}
         <li class="nav-item" role="presentation">
           <button
             class="nav-link rounded-pill px-4 fw-semibold shadow-sm border-0"
@@ -47,9 +48,10 @@
               color: var(--secondary-color-2);
             "
           >
-            <i class="bi bi-tag me-2"></i>Ventas
+            <i class="bi bi-tag me-2"></i>Todas las Ventas
           </button>
         </li>
+        {% endif %}
       </ul>
 
       <div class="tab-content pt-2" id="orderTabsContent">
@@ -124,6 +126,7 @@
           {% endif %}
         </div>
 
+        {% if user.is_staff or user.is_superuser %}
         <!-- Ventas Tab -->
         <div class="tab-pane fade" id="ventas" role="tabpanel">
           {% if ventas %}
@@ -144,7 +147,9 @@
                 <tr>
                   <td class="fw-bold">#{{ pedido.pk }}</td>
                   <td class="fw-semibold">
-                    {{ pedido.comprador.get_full_name|default:pedido.comprador.username }}
+                    {{
+                    pedido.comprador.get_full_name|default:pedido.comprador.username
+                    }}
                   </td>
                   <td>
                     {{ pedido.producto.name|default:"Producto eliminado" }}
@@ -160,13 +165,15 @@
                     </span>
                   </td>
                   <td class="text-end">
+                    {% if pedido.estado == 'verificando' %}
                     <a
                       href="{% url 'confirmar_pago' pedido.id %}"
                       class="btn btn-sm btn-success rounded-pill px-3 me-1"
                     >
                       <i class="bi bi-check-circle me-1"></i>Confirmar Pago
                     </a>
-                    
+                    {% endif %}
+
                     <a
                       href="{% url 'detalle_pedido' pedido.id %}"
                       class="btn btn-sm btn-outline-dark rounded-pill px-3"
@@ -197,6 +204,7 @@
           </div>
           {% endif %}
         </div>
+        {% endif %}
       </div>
     </div>
   </div>
