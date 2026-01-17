@@ -66,9 +66,40 @@
       <canvas id="salesChart"></canvas>
     </div>
 
+    <!-- Recent Orders -->
+    <div class="recent-orders section-container">
+      <h2 style="color: #6c1305">Pedidos Recientes</h2>
+      {% if recent_orders %}
+      <div class="table-responsive">
+        <table class="dashboard-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Cliente</th>
+              <th>Producto</th>
+              <th>Monto</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in recent_orders %}
+            <tr>
+              <td>#{{ order.id }}</td>
+              <td>{{ order.comprador.username }}</td>
+              <td>{{ order.producto.name|truncatechars:15 }}</td>
+              <td>${{ order.total }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p>No hay pedidos recientes.</p>
+      {% endif %}
+    </div>
+
     <!-- Pending Payment Verifications -->
     <div
-      class="pending-verifications section-container mb-4"
+      class="pending-verifications section-container"
       style="grid-column: span 2"
     >
       <h2 style="color: #6c1305">
@@ -115,37 +146,6 @@
       </div>
       {% else %}
       <p class="text-muted italic">No hay pagos pendientes de verificación.</p>
-      {% endif %}
-    </div>
-
-    <!-- Recent Orders -->
-    <div class="recent-orders section-container">
-      <h2 style="color: #6c1305">Pedidos Recientes</h2>
-      {% if recent_orders %}
-      <table class="dashboard-table">
-        <thead>
-          <tr>
-            <th>Order ID</th>
-            <th>Customer</th>
-            <th>Product</th>
-            <th>Date</th>
-            <th>Price</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for order in recent_orders %}
-          <tr>
-            <td>#{{ order.id }}</td>
-            <td>{{ order.comprador.username }}</td>
-            <td>{{ order.producto.name }}</td>
-            <td>{{ order.fecha_creacion|date:"M d, Y" }}</td>
-            <td>${{ order.total }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      {% else %}
-      <p>No orders found.</p>
       {% endif %}
     </div>
   </div>
