@@ -42,12 +42,16 @@ def dashboard_home(request):
             labels.append(entry['month'].strftime('%b %Y'))
             data.append(float(entry['total_sales']))
 
+    # Orders awaiting payment verification
+    pending_payments = Pedido.objects.filter(estado='verificando').select_related('comprador', 'producto').order_by('-fecha_creacion')
+
     context = {
         'total_products': total_products,
         'total_orders': total_orders,
         'unique_customers': unique_customers,
         'total_revenue': total_revenue,
         'recent_orders': recent_orders,
+        'pending_payments': pending_payments,
         'chart_labels': json.dumps(labels),
         'chart_data': json.dumps(data),
     }

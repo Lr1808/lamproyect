@@ -5,7 +5,8 @@ from store.models import Product
 class Pedido(models.Model):
     STATUS_CHOICES = [
         ('pendiente', 'Pendiente de Pago'),
-        ('pagado', 'Pagado / Verificando'),
+        ('verificando', 'Pago por Verificar'),
+        ('pagado', 'Pago Listo / Verificado'),
         ('enviado', 'Enviado'),
         ('entregado', 'Entregado'),
         ('cancelado', 'Cancelado'),

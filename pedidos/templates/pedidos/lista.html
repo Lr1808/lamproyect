@@ -47,7 +47,7 @@
               color: var(--secondary-color-2);
             "
           >
-            <i class="bi bi-tag me-2"></i>Mis Ventas
+            <i class="bi bi-tag me-2"></i>Ventas
           </button>
         </li>
       </ul>
@@ -81,7 +81,9 @@
                         style="width: 45px; height: 45px; object-fit: cover"
                       />
                       {% endif %}
-                      <span class="fw-semibold"> {{ pedido.producto.name }}</span>
+                      <span class="fw-semibold">
+                        {{ pedido.producto.name }}</span
+                      >
                     </div>
                   </td>
                   <td class="text-muted small">
@@ -92,7 +94,7 @@
                   </td>
                   <td>
                     <span
-                      class="badge rounded-pill px-3 {% if pedido.estado == 'pagado' %}bg-info {% elif pedido.estado == 'enviado' %}bg-primary {% elif pedido.estado == 'entregado' %}bg-success {% else %}bg-secondary{% endif %}"
+                      class="badge rounded-pill px-3 {% if pedido.estado == 'verificando' %}bg-info {% elif pedido.estado == 'pagado' %}bg-success {% elif pedido.estado == 'enviado' %}bg-primary {% elif pedido.estado == 'entregado' %}bg-dark {% elif pedido.estado == 'cancelado' %}bg-danger {% else %}bg-secondary{% endif %}"
                     >
                       {{ pedido.get_estado_display }}
                     </span>
@@ -140,8 +142,10 @@
               <tbody>
                 {% for pedido in ventas %}
                 <tr>
-                  <td class="fw-bold">#{{ pedido.id }}</td>
-                  <td class="fw-semibold">{{ pedido.comprador.username }}</td>
+                  <td class="fw-bold">#{{ pedido.pk }}</td>
+                  <td class="fw-semibold">
+                    {{ pedido.comprador.get_full_name|default:pedido.comprador.username }}
+                  </td>
                   <td>
                     {{ pedido.producto.name|default:"Producto eliminado" }}
                   </td>
@@ -149,16 +153,26 @@
                     ${{ pedido.total }}
                   </td>
                   <td>
-                    <span class="badge rounded-pill px-3 bg-secondary">
+                    <span
+                      class="badge rounded-pill px-3 {% if pedido.estado == 'verificando' %}bg-info {% elif pedido.estado == 'pagado' %}bg-success {% elif pedido.estado == 'enviado' %}bg-primary {% elif pedido.estado == 'entregado' %}bg-dark {% elif pedido.estado == 'cancelado' %}bg-danger {% else %}bg-secondary{% endif %}"
+                    >
                       {{ pedido.get_estado_display }}
                     </span>
                   </td>
                   <td class="text-end">
                     <a
+                      href="{% url 'confirmar_pago' pedido.id %}"
+                      class="btn btn-sm btn-success rounded-pill px-3 me-1"
+                    >
+                      <i class="bi bi-check-circle me-1"></i>Confirmar Pago
+                    </a>
+                    
+                    <a
                       href="{% url 'detalle_pedido' pedido.id %}"
                       class="btn btn-sm btn-outline-dark rounded-pill px-3"
-                      >Gestionar</a
                     >
+                      Gestionar
+                    </a>
                   </td>
                 </tr>
                 {% endfor %}
@@ -168,12 +182,18 @@
           {% else %}
           <div class="text-center py-5 bg-white rounded-4 shadow-sm">
             <i class="bi bi-shop display-1 text-muted opacity-25"></i>
-            <p class="mt-4 text-muted">Aún no has recibido ninguna venta.</p>
+            <p class="mt-4 text-muted">
+              {% if user.is_staff or user.is_superuser %} No hay ventas
+              registradas en el sistema. {% else %} Aún no has recibido ninguna
+              venta. {% endif %}
+            </p>
+            {% if not user.is_staff and not user.is_superuser %}
             <a
               href="{% url 'product_create' %}"
               class="btn btn-primary-custom px-4 mt-2"
               >Publicar una Pieza</a
             >
+            {% endif %}
           </div>
           {% endif %}
         </div>

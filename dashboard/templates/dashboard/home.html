@@ -66,6 +66,58 @@
       <canvas id="salesChart"></canvas>
     </div>
 
+    <!-- Pending Payment Verifications -->
+    <div
+      class="pending-verifications section-container mb-4"
+      style="grid-column: span 2"
+    >
+      <h2 style="color: #6c1305">
+        Verificar Pagos
+        <span class="badge bg-warning text-dark"
+          >{{ pending_payments|length }}</span
+        >
+      </h2>
+      {% if pending_payments %}
+      <div class="table-responsive">
+        <table class="dashboard-table">
+          <thead>
+            <tr>
+              <th>ID Pedido</th>
+              <th>Cliente</th>
+              <th>Producto</th>
+              <th>Método</th>
+              <th>Referencia</th>
+              <th>Total</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in pending_payments %}
+            <tr>
+              <td class="fw-bold">#{{ order.id }}</td>
+              <td>{{ order.comprador.username }}</td>
+              <td>{{ order.producto.name }}</td>
+              <td>{{ order.get_metodo_pago_display }}</td>
+              <td><code>{{ order.referencia_pago }}</code></td>
+              <td class="fw-bold text-success">${{ order.total }}</td>
+              <td>
+                <a
+                  href="{% url 'confirmar_pago' order.id %}"
+                  class="btn btn-sm btn-success rounded-pill px-3"
+                >
+                  <i class="bi bi-check-circle me-1"></i>Confirmar Pago
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="text-muted italic">No hay pagos pendientes de verificación.</p>
+      {% endif %}
+    </div>
+
     <!-- Recent Orders -->
     <div class="recent-orders section-container">
       <h2 style="color: #6c1305">Pedidos Recientes</h2>

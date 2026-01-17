@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from .models import Pedido
 from store.models import Product
@@ -24,7 +24,7 @@ def crear_pedido(request, product_id):
             total=producto.price, # Por ahora 1 unidad
             metodo_pago=metodo,
             referencia_pago=referencia,
-            estado='pagado' if referencia else 'pendiente'
+            estado='verificando' if referencia else 'pendiente'
         )
         
         # Descontar stock
@@ -40,8 +40,14 @@ def crear_pedido(request, product_id):
 def lista_pedidos(request):
     # Pedidos realizados por el usuario (Compras)
     mis_compras = Pedido.objects.filter(comprador=request.user)
+    
     # Pedidos recibidos por el usuario (Ventas)
-    mis_ventas = Pedido.objects.filter(vendedor=request.user)
+    if request.user.is_staff or request.user.is_superuser:
+        # Los administradores ven todas las ventas del sistema
+        mis_ventas = Pedido.objects.all()
+    else:
+        # Los usuarios normales solo ven sus ventas
+        mis_ventas = Pedido.objects.filter(vendedor=request.user)
     
     return render(request, 'pedidos/lista.html', {
         'compras': mis_compras,
@@ -57,3 +63,11 @@ def detalle_pedido(request, pedido_id):
         return redirect('lista_pedidos')
         
     return render(request, 'pedidos/detalle.html', {'pedido': pedido})
+@login_required
+@user_passes_test(lambda u: u.is_staff or u.is_superuser)
+def confirmar_pago(request, pedido_id):
+    pedido = get_object_or_404(Pedido, id=pedido_id)
+    pedido.estado = 'pagado'
+    pedido.save()
+    messages.success(request, f"Pago del Pedido #{pedido.id} verificado con éxito.")
+    return redirect(request.META.get('HTTP_REFERER', 'dashboard_home'))

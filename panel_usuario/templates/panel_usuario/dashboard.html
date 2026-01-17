@@ -214,6 +214,7 @@
 
           <hr class="my-5" />
 
+          {% if user.is_superuser %}
           <!-- Sell Option -->
           <div
             class="text-center bg-light p-5 rounded-4 border border-1"
@@ -241,6 +242,7 @@
               >Empezar a Vender</a
             >
           </div>
+          {% endif %}
         </div>
       </div>
     </div>
